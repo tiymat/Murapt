@@ -6,7 +6,7 @@
         "Source": "murapt.mx",
         "Dependencies": {
             "Optional": [],
-            "Required": [],
+            "Required": [ "alter", "apt", "apt-cache", "apt-mark", "msort", "[", "regexp", "tabulate" ],
             "Platform": [ "linux" ]
         }
     }
