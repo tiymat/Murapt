@@ -21,7 +21,6 @@ autocomplete set apt %[{
         install: [{
             AllowAny: true,
             AllowMultiple: true,
-            CacheTTL: -1, # "apt-cache pkgnames" is sufficiently performant not to need to use Murex's cache
             Dynamic: '{
                 apt-cache pkgnames $PREFIX -> msort
             }'
