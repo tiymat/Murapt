@@ -1,0 +1,366 @@
+private parse.apt.help {
+        # Parses commands from the helptext of most apt-related commands
+        $1 -> ['[Cc]ommands:$'..'^$']ert -> regexp 's/\s+-/ -/' -> tabulate --map --separator '( - )'
+}
+
+autocomplete set apt %[{
+    DynamicDesc: '{
+        parse.apt.help ${ apt -h }
+    }'
+    IncManPage: false, # The man page parser picks up arguments for "apt list" (e.g. "--installed") as top-level flags
+    ListView: true,
+    FlagsDesc: {
+        "-a": "-a=architecture",
+        "-c": "-c=config_file",
+        "-h": "help", "--help": "help",
+        "-o": "-o=config_string",
+        "-t": "-t=target_release",
+        "-v": "version", "--v": "version"
+    },
+    FlagValues: {
+        install: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            CacheTTL: -1, # "apt-cache pkgnames" is sufficiently performant not to need to use Murex's cache
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        list: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Flags: ["--all-versions", "--installed", "--upgradeable"],
+        }],
+        reinstall: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+       remove: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+        satisfy: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        search: [{
+            AllowAny: true,
+            AllowMultiple: true,
+        }],
+        show: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            CacheTTL: -1,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        upgrade: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+    }
+}]
+
+autocomplete set apt-cache %[{
+    DynamicDesc: '{
+        parse.apt.help ${ apt-cache -h }
+    }',
+    FlagsDesc: { # Unfortunately there doesn't seem to be a convenient way of parsing these automatically.
+        depends: "depends shows a listing of each dependency a package has and all the possible other packages that can fulfill that dependency.",
+        dotty: "dotty takes a list of packages on the command line and generates output suitable for use by dotty from the GraphViz package.",
+        dump: "dump shows a short listing of every package in the cache. It is primarily for debugging.",
+        dumpavail: "dumpavail prints out an available list to stdout.",
+        gencaches: "gencaches creates APT's package cache. This is done implicitly by all commands needing this cache if it is missing or outdated.",
+        madison: "apt-cache's madison command attempts to mimic the output format and a subset of the functionality of the Debian archive management tool, madison.",
+        pkgnames: "This command prints the name of each package APT knows. The optional argument is a prefix match to filter the name list.",        policy: "policy is meant to help debug issues relating to the preferences file. With no arguments it will print out the priorities of each source. Otherwise it prints out detailed information about the priority selection of the named package.",
+        rdepends: "rdepends shows a listing of each reverse dependency a package has.",
+        search: "search performs a full text search on all available package lists for the POSIX regex pattern given.",
+        show: "show performs a function similar to dpkg --print-avail; it displays the package records for the named packages.",
+        showpkg: "showpkg displays information about the packages listed on the command line.",
+        showsrc: "showsrc displays all the source package records that match the given package names.",
+        stats: "stats displays some statistics about the cache. No further arguments are expected.",
+        unmet: "unmet displays a summary of all unmet dependencies in the package cache.",
+        xcvg: "The same as dotty, only for xvcg from the VCG tool.",
+    },
+    FlagValues: {
+        depends: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        dotty: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        madison: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        pkgnames: [{
+            AllowAny: true
+        }],
+        policy: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        rdepends: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        search: [{
+            AllowAny: true,
+            AllowMultiple: true,
+        }],
+        show: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        showpkg: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        showsrc: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        xcvg: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+    },
+    IncManPage: true,
+    ListView: true,
+}]
+
+autocomplete set apt-cdrom %[{
+    DynamicDesc: '{
+        parse.apt.help ${ apt-cdrom -h }
+    }',
+    IncManPage: true,
+    ListView: true,
+}]
+
+autocomplete set apt-config %[{
+    DynamicDesc: '{
+        parse.apt.help ${ apt-config -h }
+    }',
+    IncManPage: true,
+    ListView: true,
+}]
+
+autocomplete set apt-get %[{
+    DynamicDesc: '{
+        parse.apt.help ${ apt-get -h }
+    }',
+    FlagValues: {
+        build-dep: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        changelog: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        download: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        install: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        purge: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+        remove: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+        satisfy: [{
+            AllowAny: true,
+            AllowMultiple: true,
+        }],
+        source: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+    },
+    IncManPage: true,
+    ListView: true,
+}]
+
+autocomplete set apt-key %[{
+    # Usage of apt-key is deprecated with the exception of apt-key del
+    FlagsDesc: { del: "remove the key <keyid>" },
+    FlagValues: { del: [{ AllowAny: true }] },
+    ListView: true,
+}]
+
+autocomplete set apt-mark %[{
+    DynamicDesc: '{
+        %{
+            install: "Schedule a package to be installed",
+            remove: "Schedule a package to be removed",
+            purge: "Schedule a package to be purged",
+            showinstall: "Show packages scheduled to be installed",
+            showremove: "Show packages scheduled to be removed",
+            showpurge: "Show packages scheduled to be purged",
+        } -> alter -m / ${ parse.apt.help ${ apt-mark -h } }
+    }',
+    FlagValues: {
+        auto: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+        hold: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        install: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        manual: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+        purge: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        remove: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+        showauto: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+        showhold: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        showinstall: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        showmanual: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showinstall
+            }'
+        }],
+        showpurge: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        showremove: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-cache pkgnames $PREFIX -> msort
+            }'
+        }],
+        unhold: [{
+            AllowAny: true,
+            AllowMultiple: true,
+            Dynamic: '{
+                apt-mark showhold
+            }'
+        }],
+    },
+    IncManPage: true,
+    ListView: true,
+}]

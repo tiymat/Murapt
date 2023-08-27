@@ -1,0 +1,13 @@
+[
+    {
+        "Name": "Murapt",
+        "Summary": "Murex integrations for apt.",
+        "Version": "0.1",
+        "Source": "murapt.mx",
+        "Dependencies": {
+            "Optional": [],
+            "Required": [],
+            "Platform": [ "linux" ]
+        }
+    }
+]
