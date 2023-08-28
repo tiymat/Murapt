@@ -2,7 +2,7 @@
     {
         "Name": "Murapt",
         "Summary": "Murex integrations for apt.",
-        "Version": "0.1",
+        "Version": "0.2",
         "Source": "murapt.mx",
         "Dependencies": {
             "Optional": [],
