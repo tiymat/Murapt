@@ -1,6 +1,18 @@
+# Parses commands from the helptext of most apt-related commands
+# $1: helptext to parse for commands
 private parse.apt.help {
-        # Parses commands from the helptext of most apt-related commands
         $1 -> ['[Cc]ommands:$'..'^$']ert -> regexp 's/\s+-/ -/' -> tabulate --map --separator '( - )'
+}
+
+# Lists the names of all currently-installed packages
+private list.installed.packages {
+    apt-mark showinstall
+}
+
+# Lists all known packages.
+# $1: Prefix listed packages should start with (optional)
+private list.all.packages {
+    apt-cache pkgnames $1 -> msort
 }
 
 autocomplete set apt %[{
@@ -21,9 +33,8 @@ autocomplete set apt %[{
         install: [{
             AllowAny: true,
             AllowMultiple: true,
-            CacheTTL: -1, # "apt-cache pkgnames" is sufficiently performant not to need to use Murex's cache
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         list: [{
@@ -35,21 +46,21 @@ autocomplete set apt %[{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
        remove: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
         satisfy: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         search: [{
@@ -61,14 +72,14 @@ autocomplete set apt %[{
             AllowMultiple: true,
             CacheTTL: -1,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         upgrade: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
     }
@@ -100,21 +111,21 @@ autocomplete set apt-cache %[{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         dotty: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         madison: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         pkgnames: [{
@@ -124,14 +135,14 @@ autocomplete set apt-cache %[{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         rdepends: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         search: [{
@@ -142,28 +153,28 @@ autocomplete set apt-cache %[{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         showpkg: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         showsrc: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         xcvg: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
     },
@@ -196,42 +207,42 @@ autocomplete set apt-get %[{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         changelog: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         download: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         install: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         purge: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
         remove: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
         satisfy: [{
@@ -242,7 +253,7 @@ autocomplete set apt-get %[{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
     },
@@ -273,84 +284,84 @@ autocomplete set apt-mark %[{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
         hold: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         install: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         manual: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
         purge: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         remove: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
         showauto: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
         showhold: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         showinstall: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         showmanual: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-mark showinstall
+                list.installed.packages
             }'
         }],
         showpurge: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         showremove: [{
             AllowAny: true,
             AllowMultiple: true,
             Dynamic: '{
-                apt-cache pkgnames $PREFIX -> msort
+                list.all.packages $PREFIX
             }'
         }],
         unhold: [{
